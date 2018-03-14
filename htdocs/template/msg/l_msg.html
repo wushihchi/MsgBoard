@@ -1,0 +1,273 @@
+<html>
+	<head>
+		<link rel="stylesheet" href="/www/assets/vendor/css/tether.min.css">
+		<link rel="stylesheet" type="text/css" href="/www/assets/vendor/bootstrap/css/bootstrap.min.css">
+		<link rel="stylesheet" href="/www/assets/vendor/jquery/css/jquery-ui.css">
+		<link href="/www/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen"> <!-- 載入 Bootstrap -->
+		<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css"><!--用本地載入就會抓不到圖-->
+		<link href="/www/assets/vendor/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet" media="screen"> <!-- Bootstrap 的 RWD 套件 -->
+		<script src="/www/assets/vendor/js/tether.min.js"></script>
+		<script src="/www/assets/vendor/jquery/js/jquery-3.3.1.min.js"></script> <!-- 載入 jQuery 套件 -->
+		<script src="/www/assets/vendor/jquery/js/jquery-ui.js"></script>
+		<script src="/www/assets/vendor/bootstrap/js/bootstrap.min.js"></script> <!-- 載入 Bootstrap 的 JavaScript 功能 -->
+		<script src="/www/assets/vendor/jquery/1.10.2/jquery.min.js"></script>
+		<link rel="stylesheet" href="/www/assets/vendor/bootstrap/3.0.2/bootstrap.min.css">
+		<script src="/www/assets/vendor/bootstrap/3.0.2/bootstrap.min.js"></script> 
+		<link href="/www/assets/vendor/bootstrap-dialog/css/bootstrap-dialog.css" rel="stylesheet" type="text/css" />
+		<script src="/www/assets/vendor/bootstrap-dialog/js/bootstrap-dialog.js"></script>
+		<script type="text/javascript">
+		function submint_click(){
+			var UserId = $('#UserId').val().trim();
+			var Msg_Content = $('#Msg_Content').val().trim();
+
+			if(Msg_Content==''){
+				alert('留言內容不得為空值,請確認!');
+				return false;
+			}else{
+				if(chk(Msg_Content)){
+					//document.getElementById('msgForm').submit();
+					add_click(UserId,Msg_Content);
+				}else{
+					//alert('');
+					return false;
+				}
+			}
+		}
+
+		function chk(str)
+		{
+			var toalarm = false;
+			var ch;
+			var stralarm = new Array("<",">");
+			for (var i=0;i<stralarm.length;i++){ //依序載入使用者輸入的每個字元
+				for (var j=0;j<str.length;j++)
+				{
+					ch=str.substr(j,1);
+					if (ch==stralarm[i]) //如果包含禁止字元
+					{
+						toalarm = true; //設置此變數為true
+					}
+				} 
+			}
+			if (toalarm){
+				alert("包含特殊字元,請修正!"); 
+				return false;
+			}else{
+				return true;
+			}
+		}
+
+		function add_click(iUsrId,iMsgContent){
+			$.ajax({
+			  url: "/www/msg/list/insert",
+			  method:"post",
+			  data: {sUsrId:iUsrId,sMsgContent:iMsgContent}
+			}).done(function(result) {
+				location.reload();
+			});
+		}
+
+		function del_click(iMsgId){
+			$.ajax({
+			  url: "/www/msg/list/delete",
+			  method:"post",
+			  data: {sMsgId:iMsgId}
+			}).done(function(result) {
+				location.reload();
+			});
+		}
+
+		function edit_click(iUserId,iMsgContent,iMsgId){
+			$('#edit_user').text(iUserId);
+			$('#edit_content').text(iMsgContent);
+			$('#edit_aid').val(iMsgId);
+		}
+
+		function edit_submit(){
+			var edit_content = $('#edit_content').val();
+			if(chk(edit_content)){
+				var edit_aid = $('#edit_aid').val();
+        		//console.log(edit_content);
+         		$.ajax({
+				  	url: "/www/msg/list/update",
+				  	method:"post",
+				  	data: {sMsgId:edit_aid,sMsgContent:edit_content}
+				}).done(function(result) {
+					location.reload();
+				});
+			}else{
+				return false;
+			}
+			
+		}
+
+		function changePage(iPage){
+			$.ajax({
+			  	url: "/www/msg/list/changepage",
+			  	method:"post",
+			  	data: {page:iPage}
+			}).done(function(result) {
+				location.reload();
+			});
+		}
+
+		</script>
+		<title>留言板</title>
+	</head>
+	<body>
+		<form method="post" action="n_msg.php" name="msgForm" id="msgForm">
+			<!-- Modal -->
+			<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+				<div class="modal-dialog" role="document">
+				    <div class="modal-content">
+				      	<div class="modal-header">
+				       	 	<h4 class="modal-title" id="myModalLabel">編輯留言內容</h4>
+				      	</div>
+				    	<div class="modal-body">
+				        	<table class="table table-striped">
+								<tr>
+									<td align="right" nowrap>暱稱:angel</td>
+									<td align="left">
+										<span name="edit_user" id="edit_user">angel</span>
+										<input type="hidden" name="edit_aid" id="edit_aid"/>
+									</td>
+								</tr>
+								<tr>
+									<td align="right" nowrap>內容:</td>
+									<td align="left"><textarea class="form-control" name="edit_content" id="edit_content"></textarea></td>
+								</tr>
+							</table>
+				    	</div>
+				    	<div class="modal-footer">
+				        	<button type="button" class="btn btn-primary" onclick="edit_submit();">確認</button>
+				        	<button type="button" class="btn btn-default" data-dismiss="modal">關閉</button>
+				      	</div>
+				    </div>
+				</div>
+			</div>
+			<div class="container">
+				<nav class="navbar navbar-default" role="navigation">
+				   	<div class="container-fluid">
+				       	<!-- Brand and toggle get grouped for better mobile display -->
+						<div class="navbar-header">
+				           	<button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+				data-target="#bs-example-navbar-collapse-1" >
+				               <span class="sr-only">Toggle navigation</span>
+				               <span class="icon-bar"></span>
+				               <span class="icon-bar"></span>
+				               <span class="icon-bar"></span>
+				           	</button>
+				        	<!--a class="navbar-brand" href="#">MessageBoard</a-->
+				       </div>
+
+				       <!-- Collect the nav links, forms, and other content for toggling -->
+						<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+				           	<ul class="nav navbar-nav">
+				               <li {{if ($pagename='user')}}class="active"{{/if}}><a href="/www/msg/list/msglist">MessageBoard</a></li>
+				               <li><a href="/www/user/list/userlist">UserPage</a></li>
+				               <li><a href="/www/login/page/logout">Logout</a></li>
+				           	</ul>
+				       	</div><!-- /.navbar-collapse -->
+					</div>
+				   	<!-- /.container-fluid -->
+				</nav>
+				{{if ($session_id!='')}}
+				<table class="table table-striped">
+					<tr>
+						<td align="right" nowrap>暱稱:</td>
+						<td align="left">
+							{{$session_name}}
+							<input type="hidden" class="form-control" name="UserId" id="UserId" size="18" value="{{$session_id}}"/>
+						</td>
+					</tr>
+					<tr>
+						<td align="right" nowrap>內容:</td>
+						<td align="left"><textarea class="form-control" name="Msg_Content" id="Msg_Content"></textarea></td>
+					</tr>
+					<tr>
+						<td colspan="2" align="right">
+							<input type="button" class="form-control btn-primary" name="submit_btn" id="submit_btn" value="送出" onclick="submint_click();"/>
+						</td>
+					</tr>
+				</table>
+				<br>
+				{{/if}}
+				<!--分頁處理Start-->
+				<ul class="pagination">
+					{{if ($page==1)}}
+						{{$prePage=1}}
+					{{else}}
+						{{$prePage=$page-1}}
+					{{/if}}
+					{{if ($page==$pagecnt)}}
+						{{$nextPage=$pagecnt}}
+					{{else}}
+						{{$nextPage=$page+1}}
+					{{/if}}
+					<li><a href="#" title="上一頁" onclick="changePage('{{$prePage}}');">«</a></li>
+					{{for $idx=1 to $pagecnt}}
+					<li {{if ($idx==$page)}}class="active"{{/if}}><a href="#" title="第{{$idx}}頁" onclick="changePage('{{$idx}}');">{{$idx}}</a></li>
+					{{/for}}
+					<li><a href="#" title="下一頁" onclick="changePage('{{$nextPage}}');">»</a></li>
+				</ul>
+				<!--分頁處理End-->
+				<table class="table table-striped">
+					{{foreach from=$msglist item=item}}
+					<tr>
+						<td align="right" nowrap>
+							留言人:
+						</td>
+						<td align="left">
+							{{if ($item.user_id==0)}}
+							使用者已刪除
+							{{else}}
+							{{$item.user_name}}
+							{{/if}}
+
+							{{if ($session_id==$item.user_id)}}
+							<a href="#" title="編輯" data-toggle="modal" data-target="#myModal" onclick="edit_click('{{$item.user_id}}','{{$item.msg_content}}','{{$item.msg_id}}');"><span class="ui-icon ui-icon-pencil"></span></a>
+							{{/if}}
+							{{if ($session_id==$item.user_id||$session_level==0||$session_level==3)}}
+							<a href="#" title="刪除" onclick="del_click('{{$item.msg_id}}');"><span class="ui-icon ui-icon-trash"></span></a>
+							{{/if}}
+						</td>
+					</tr>
+					<tr>
+						<td align="right" nowrap>內容:</td>
+						<td align="left">{{$item.msg_content}}</td>
+					</tr>
+					<tr>
+						<td align="right" nowrap>時間:</td>
+						<td align="left">{{$item.msg_dtm}}</td>
+					</tr>
+					<tr>
+						<td colspan="2">
+							<hr size="8px" align="center" width="100%">
+						</td>
+					</tr>
+					{{/foreach}}
+				</table>
+				<!--分頁處理Start-->
+				<ul class="pagination">
+					{{if ($page==1)}}
+						{{$prePage=1}}
+					{{else}}
+						{{$prePage=$page-1}}
+					{{/if}}
+					{{if ($page==$pagecnt)}}
+						{{$nextPage=$pagecnt}}
+					{{else}}
+						{{$nextPage=$page+1}}
+					{{/if}}
+					<li><a href="#" title="上一頁" onclick="changePage('{{$prePage}}');">«</a></li>
+					{{for $idx=1 to $pagecnt}}
+					<li {{if ($idx==$page)}}class="active"{{/if}}><a href="#" title="第{{$idx}}頁" onclick="changePage('{{$idx}}');">{{$idx}}</a></li>
+					{{/for}}
+					<li><a href="#" title="下一頁" onclick="changePage('{{$nextPage}}');">»</a></li>
+				</ul>
+				<!--分頁處理End-->
+			</div>
+		</form>
+	</body>
+</html>
+
