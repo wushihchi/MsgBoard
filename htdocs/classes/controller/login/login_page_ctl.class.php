@@ -13,18 +13,18 @@ class Login_Page_Ctl extends Controller
     {
         $oModel = new Angeldb_User_Model;
 
-        $aEmailExist = $oModel->get(array('user_email' =>$_POST["userEmail"]), array('field' => 'user_id'));
+        $aEmailExist = $oModel->get(array('user_email'=>$_POST["userEmail"]), array('field'=>'user_id'));
         if($aEmailExist==null){
-            //return 'EmailError';
             unset($oModel);
-            return '您尚未註冊，請先註冊!';
+            //return '您尚未註冊，請先註冊!';
+            return false;
         }
-        //return 'md5($_POST["userPwd"])=['.md5($_POST["userPwd"]).']$_POST["userPwd"]=['.$_POST["userPwd"].']';
-        $aUserList = $oModel->get(array('user_email' =>$_POST["userEmail"],'user_pwd' =>md5($_POST["userPwd"])), array('field' => 'user_id','user_name','user_level'));
+
+        $aUserList = $oModel->get(array('user_email'=>$_POST["userEmail"],'user_pwd'=>md5($_POST["userPwd"])), array('field'=>'user_id','user_name','user_level'));
         if($aUserList==null){
-            //return 'PwdError';
             unset($oModel);
-            return '密碼輸入錯誤，請確認!';
+            //return '密碼輸入錯誤，請確認!';
+            return false;
         }
 
         session_start();
@@ -34,8 +34,8 @@ class Login_Page_Ctl extends Controller
         $_SESSION['user_name']  = $aUserList['user_name'];
 
         unset($oModel);
-        //return json_encode($aUserList);
-        return "SUCCESS";
+
+        return true;
     }
 
     public function get_logout()

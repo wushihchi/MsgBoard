@@ -11,7 +11,8 @@
 		<script src="/www/assets/vendor/jquery/js/jquery-ui.js"></script>
 		<script src="/www/assets/vendor/bootstrap/js/bootstrap.min.js"></script> <!-- 載入 Bootstrap 的 JavaScript 功能 -->
 		<script type="text/javascript">
-		function submitFunc(){
+		function submitFunc()
+		{
 			//密碼輸入無誤且資料不存在才送出!!
 			var userName = $('#userName').val();
 			var userEmail = $('#userEmail').val();
@@ -53,7 +54,8 @@
 		}
 
 		//檢查密碼與密碼確認是否一致
-		function chkpwd(){
+		function chkpwd()
+		{
 			if($('#userPwd1').val().trim()==''||$('#userPwd2').val().trim()==''){
 				alert('密碼與確認密碼皆須輸入，請確認!');
 				return false;
@@ -69,7 +71,8 @@
 			
 		}
 
-		function regist_func(iUserName,iUserEmail,iUserPwd){
+		function regist_func(iUserName,iUserEmail,iUserPwd)
+		{
 			$.ajax({
 			    url: "/www/regist/page/insert",
 			    method:"post",

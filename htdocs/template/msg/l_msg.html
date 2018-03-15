@@ -16,7 +16,8 @@
 		<link href="/www/assets/vendor/bootstrap-dialog/css/bootstrap-dialog.css" rel="stylesheet" type="text/css" />
 		<script src="/www/assets/vendor/bootstrap-dialog/js/bootstrap-dialog.js"></script>
 		<script type="text/javascript">
-		function submint_click(){
+		function submintClick()
+		{
 			var UserId = $('#UserId').val().trim();
 			var Msg_Content = $('#Msg_Content').val().trim();
 
@@ -25,10 +26,9 @@
 				return false;
 			}else{
 				if(chk(Msg_Content)){
-					//document.getElementById('msgForm').submit();
 					add_click(UserId,Msg_Content);
 				}else{
-					//alert('');
+					alert("包含特殊字元,請修正!"); 
 					return false;
 				}
 			}
@@ -36,78 +36,102 @@
 
 		function chk(str)
 		{
-			var toalarm = false;
+			var pass = true;
 			var ch;
 			var stralarm = new Array("<",">");
 			for (var i=0;i<stralarm.length;i++){ //依序載入使用者輸入的每個字元
-				for (var j=0;j<str.length;j++)
-				{
+				for (var j=0;j<str.length;j++){
 					ch=str.substr(j,1);
-					if (ch==stralarm[i]) //如果包含禁止字元
-					{
-						toalarm = true; //設置此變數為true
+					if (ch==stralarm[i]){
+						//如果包含禁止字元
+						pass = false; //設置此變數為true
 					}
 				} 
 			}
-			if (toalarm){
-				alert("包含特殊字元,請修正!"); 
-				return false;
-			}else{
-				return true;
-			}
+			return pass;
 		}
 
-		function add_click(iUsrId,iMsgContent){
+		function add_click(iUsrId,iMsgContent)
+		{
 			$.ajax({
 			  url: "/www/msg/list/insert",
 			  method:"post",
 			  data: {sUsrId:iUsrId,sMsgContent:iMsgContent}
 			}).done(function(result) {
-				location.reload();
+				//alert('result='+result);
+				if(result){
+					location.reload();
+				}else{
+					alert('error');
+					return false;
+				}
+				
 			});
 		}
 
-		function del_click(iMsgId){
+		function del_click(iMsgId)
+		{
 			$.ajax({
 			  url: "/www/msg/list/delete",
 			  method:"post",
 			  data: {sMsgId:iMsgId}
-			}).done(function(result) {
-				location.reload();
+			}).done(function(result){
+				if(result){
+					location.reload();
+				}else{
+					alert('error');
+					return false;
+				}
+				
 			});
 		}
 
-		function edit_click(iUserId,iMsgContent,iMsgId){
+		function edit_click(iUserId,iMsgContent,iMsgId)
+		{
 			$('#edit_user').text(iUserId);
 			$('#edit_content').text(iMsgContent);
 			$('#edit_aid').val(iMsgId);
 		}
 
-		function edit_submit(){
+		function edit_submit()
+		{
 			var edit_content = $('#edit_content').val();
 			if(chk(edit_content)){
 				var edit_aid = $('#edit_aid').val();
-        		//console.log(edit_content);
          		$.ajax({
 				  	url: "/www/msg/list/update",
 				  	method:"post",
 				  	data: {sMsgId:edit_aid,sMsgContent:edit_content}
 				}).done(function(result) {
-					location.reload();
+					if(result){
+						location.reload();
+					}else{
+						alert('error');
+						return false;
+					}
+					
 				});
 			}else{
+				alert("包含特殊字元,請修正!");
 				return false;
 			}
 			
 		}
 
-		function changePage(iPage){
+		function changePage(iPage)
+		{
 			$.ajax({
 			  	url: "/www/msg/list/changepage",
 			  	method:"post",
 			  	data: {page:iPage}
 			}).done(function(result) {
-				location.reload();
+				if(result){
+					location.reload();
+				}else{
+					alert('error');
+					return false;
+				}
+				
 			});
 		}
 
@@ -186,7 +210,7 @@
 					</tr>
 					<tr>
 						<td colspan="2" align="right">
-							<input type="button" class="form-control btn-primary" name="submit_btn" id="submit_btn" value="送出" onclick="submint_click();"/>
+							<input type="button" class="form-control btn-primary" name="submit_btn" id="submit_btn" value="送出" onclick="submintClick();"/>
 						</td>
 					</tr>
 				</table>

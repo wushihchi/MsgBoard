@@ -16,30 +16,25 @@
 		<link href="/www/assets/vendor/bootstrap-dialog/css/bootstrap-dialog.css" rel="stylesheet" type="text/css" />
 		<script src="/www/assets/vendor/bootstrap-dialog/js/bootstrap-dialog.js"></script>
 		<script type="text/javascript">
-		function submint_click(){
-			var userName = $('#userName').val().trim();
-			var msg_content = $('#msg_content').val().trim();
-			if(userName==''||msg_content==''){
-			    alert('留言內容不得為空值,請確認!');
-			    return false;
-			}else{
-				document.getElementById('msgForm').submit();
-			}
-		}
-
-		function del_click(iUserId){
+		function del_click(iUserId)
+		{
 			$.ajax({
 			  url: "/www/user/list/delete",
 			  method:"post",
 			  data: {UserId:iUserId}
 			}).done(function(result) {
-				//alert(result);
-				//result=1->刪除一筆資料的意思?
-				location.reload();
+				if(result){
+					location.reload();
+				}else{
+					alert('error');
+					return false;
+				}
+				
 			});
 		}
 
-		function edit_click(iUserId,iUsername,iUserLevel){
+		function edit_click(iUserId,iUsername,iUserLevel)
+		{
 			if(iUserLevel==3){
 				$("#edit_level").prop("checked",true);
 			}else{
@@ -50,7 +45,8 @@
 			$('#edit_userid').val(iUserId);
 		}
 
-		function edit_submit(){
+		function edit_submit()
+		{
 			var edit_level = 0;
 			if($("#edit_level").prop('checked')){
 				edit_level = 3;
@@ -63,19 +59,28 @@
 			  	method:"post",
 			  	data: {UserId:edit_aid,UserLevel:edit_level}
 			}).done(function(result) {
-				//alert(result);
-				//alert('修改成功!');
-				location.reload();
+				if(result){
+					location.reload();
+				}else{
+					alert('error');
+					return false;
+				}
 			});
 		}
 
-		function changePage(iPage){
+		function changePage(iPage)
+		{
 			$.ajax({
 			  	url: "/www/user/list/changepage",
 			  	method:"post",
 			  	data: {page:iPage}
 			}).done(function(result) {
-				location.reload();
+				if(result){
+					location.reload();
+				}else{
+					alert('error');
+					return false;
+				}
 			});
 		}
 
