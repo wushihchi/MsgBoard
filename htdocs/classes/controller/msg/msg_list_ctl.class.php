@@ -30,7 +30,12 @@ class Msg_List_Ctl extends Controller
             ));
 
             $aMsgUser = $oMsgModel->find_col('user_id',array(),array('field' => 'user_id'));
-            $aUserList = $oUserModel->find_pair('user_id','user_name',array('user_id'=>$aMsgUser),array());
+            $aUserList = $oUserModel->find_pair(
+                'user_id',
+                'user_name',
+                array('user_id'=>$aMsgUser),
+                array()
+            );
 
             
             foreach ($aMsgList as $iKey => $aValue) {
@@ -65,7 +70,7 @@ class Msg_List_Ctl extends Controller
             $primary_key = $oModel->insert(array(
                 'user_id'     => $_POST["sUsrId"],
                 'msg_content' => $sMsgContent,
-                'msg_dtm' => date ("Y-m-d H:i:s" , mktime(date('H')+7, date('i'), date('s'), date('m'), date('d'), date('Y'))),
+                'msg_dtm' => date ("Y-m-d H:i:s", mktime(date('H')+7, date('i'), date('s'), date('m'), date('d'), date('Y'))),
             ));
             unset($oModel);
             if($primary_key){
@@ -83,7 +88,10 @@ class Msg_List_Ctl extends Controller
     {
         if($this->chkSession()){
             $oModel = new Angeldb_MsgBoard_Model;
-            $iUpdateCnt = $oModel->update(array('msg_content'=> $_POST["sMsgContent"]),array('msg_id'=> $_POST["sMsgId"]));
+            $iUpdateCnt = $oModel->update(
+                array('msg_content'=> $_POST["sMsgContent"]),
+                array('msg_id'=> $_POST["sMsgId"])
+            );
             unset($oModel);
 
             if($iUpdateCnt>0){
@@ -118,15 +126,15 @@ class Msg_List_Ctl extends Controller
     {
         session_start();
 
-        if($_SESSION['user_id']==''){
+        if ($_SESSION['user_id']=='') {
             $_SESSION['pagename'] = 'login';
             return false;
-        }else{
+        } else {
             $_SESSION['pagename'] ='msg';
-            if(!isset($_SESSION['msgpage'])){
+            if (!isset($_SESSION['msgpage'])) {
                 $_SESSION['msgpage'] = 1;
             }
-            if(!isset($_SESSION['msgpagesize'])){
+            if (!isset($_SESSION['msgpagesize'])) {
                 $_SESSION['msgpagesize'] = 5;
             }
             

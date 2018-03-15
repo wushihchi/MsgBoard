@@ -13,9 +13,8 @@
 		<script type="text/javascript">
 		function submitFunc()
 		{
-			//密碼輸入無誤且資料不存在才送出!!
-			var userName = $('#userName').val();
-			var userEmail = $('#userEmail').val();
+			var userName = $('#userName').val().trim();
+			var userEmail = $('#userEmail').val().trim();
 			if(userName==''){
 				alert('暱稱未輸入，請確認!');
 				return false;
@@ -24,33 +23,67 @@
 				alert('Email帳號未輸入，請確認!');
 				return false;
 			}
-			var chkpwd_FG = chkpwd();
-			if(chkpwd_FG){
-				var userPwd = $('#userPwd').val();
-				$.ajax({
-				 	url: "/www/regist/page/checkexist",
-					method:"post",
-					async:false,
-					data: {userName:userName,userEmail:userEmail}
-				}).done(function(result) {
-					if(result=='NONE'){
-						var emailRule = /^\w+((-\w+)|(\.\w+))*\@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z]+$/;
-						//alert('可註冊!!');
-						if($('#userEmail').val().search(emailRule)!= -1){
-							//$('#registForm').submit();
-							regist_func(userName,userEmail,userPwd);
-						}else{
-							alert('Email格式錯誤,請確認!!');
-							return false;
-						}
-					}else{
-						alert(result);
-						return false;
-					}
-				});
-			}else{
+
+            var emailRule = /^\w+((-\w+)|(\.\w+))*\@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z]+$/;
+
+			if (userEmail.search(emailRule)== -1) {
+				alert('Email格式錯誤,請確認!!');
 				return false;
 			}
+			//alert('userEmail='+userEmail);
+			if (!chkEmailExist(userEmail)) {
+				alert('Email已存在,請重新輸入!');
+				return false;
+			}
+
+			if (!chkNameExist(userName)) {
+				alert('暱稱已存在,請重新輸入!');
+				return false;
+			}
+
+			if (!chkpwd()) {
+				return false;
+			}
+			
+			var userPwd = $('#userPwd').val();
+			regist_func(userName,userEmail,userPwd);
+
+		}
+
+		function chkEmailExist(iuserEmail){
+			var RtnVal = true;
+			$.ajax({
+			 	url: "/www/regist/page/checkemailexist",
+				method:"post",
+				async:false,
+				data: {userEmail:iuserEmail}
+			}).done(function(result) {
+
+				if (result) {
+					RtnVal = true;
+				} else {
+					RtnVal = false;
+				}
+				
+			});
+			return RtnVal;
+		}
+
+		function chkNameExist(iuserName){
+			var RtnVal = true;
+			$.ajax({
+			 	url: "/www/regist/page/checknameexist",
+				method:"post",
+				async:false,
+				data: {userName:iuserName}
+			}).done(function(result) {
+				if (result) {
+					RtnVal = true;
+				} else {
+					RtnVal = false;
+				}
+			});
+			return RtnVal;
 		}
 
 		//檢查密碼與密碼確認是否一致
@@ -79,7 +112,13 @@
 			    data: {UserName:iUserName,UserEmail:iUserEmail,UserPwd:iUserPwd}
 			}).done(function(result) {
 				//alert(result);
-				location.href = '/www/login/page';
+				if(result){
+					location.href = '/www/login/page';
+				}else{
+					alert('error');
+					return false;
+				}
+				
 			});
 		}
 		</script>

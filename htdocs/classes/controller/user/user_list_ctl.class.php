@@ -9,7 +9,7 @@ class User_List_Ctl extends Controller
 
     public function get_userlist()
     {
-        if($this->chkSession()){
+        if ($this->chkSession()) {
             $oModel = new Angeldb_User_Model;
 
             $iPage = $_SESSION['userpage'];
@@ -39,47 +39,54 @@ class User_List_Ctl extends Controller
                 'pagesize'      => $iPageSize,
                 'pagecnt'       => $iPageCnt
             ));
-        }else{
+        } else {
             return Smarty_View::make('login/login.html',array('pagename'=>'login'));
         }
     }
 
     public function post_update()
     {
-        if($this->chkSession()){
+        if ($this->chkSession()) {
             $oModel = new Angeldb_User_Model;
-            $iUpdateCnt = $oModel->update(array('user_level'=> $_POST["UserLevel"]),array('user_id'=> $_POST["UserId"]));
+            $iUpdateCnt = $oModel->update(
+                array('user_level'=> $_POST["UserLevel"]),
+                array('user_id'=> $_POST["UserId"])
+            );
             unset($oModel);
 
-            if($iUpdateCnt>0){
+            if ($iUpdateCnt>0) {
                 return true;
-            }else{
+            } else {
                 return false;
             }
             
-        }else{
+        } else {
             return Smarty_View::make('login/login.html',array('pagename'=>'login'));
         }
     }
 
     public function post_delete()
     {
-        if($this->chkSession()){
+        if ($this->chkSession()) {
             $oUserModel = new Angeldb_User_Model;
             $iDeleteCnt = $oUserModel->delete_data(array('user_id'=> $_POST["UserId"]));
             unset($oUserModel);
 
             //使用者刪除,留言人跟著變成0
             $oMsgModel = new Angeldb_MsgBoard_Model;
-            $iUpdateCnt = $oMsgModel->update(array('user_id'=> 0),array('user_id'=> $_POST["UserId"]));
+            $iUpdateCnt = $oMsgModel->update(
+                array('user_id'=> 0),
+                array('user_id'=> $_POST["UserId"])
+            );
+
             unset($oMsgModel);
             
-            if($iDeleteCnt>0){
+            if ($iDeleteCnt>0) {
                 return true;
-            }else{
+            } else {
                 return false;
             }
-        }else{
+        } else {
             return Smarty_View::make('login/login.html',array('pagename'=>'login'));
         }
     }
@@ -87,16 +94,16 @@ class User_List_Ctl extends Controller
     private function chkSession()
     {
         session_start();
-        if($_SESSION['user_id']==''){
+        if ($_SESSION['user_id']=='') {
             $_SESSION['pagename']='login';
 
             return false;
-        }else{
+        } else {
             $_SESSION['pagename']='user';
-            if(!isset($_SESSION['userpage'])){
+            if (!isset($_SESSION['userpage'])) {
                 $_SESSION['userpage']     = 1;
             }
-            if(!isset($_SESSION['userpagesize'])){
+            if (!isset($_SESSION['userpagesize'])) {
                 $_SESSION['userpagesize'] = 5;
             }
 

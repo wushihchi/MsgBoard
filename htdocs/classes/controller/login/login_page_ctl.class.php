@@ -13,15 +13,23 @@ class Login_Page_Ctl extends Controller
     {
         $oModel = new Angeldb_User_Model;
 
-        $aEmailExist = $oModel->get(array('user_email'=>$_POST["userEmail"]), array('field'=>'user_id'));
-        if($aEmailExist==null){
+        $aEmailExist = $oModel->get(
+            array('user_email'=>$_POST["userEmail"]), 
+            array('field'=>'user_id'
+        ));
+
+        if ($aEmailExist==null) {
             unset($oModel);
             //return '您尚未註冊，請先註冊!';
             return false;
         }
 
-        $aUserList = $oModel->get(array('user_email'=>$_POST["userEmail"],'user_pwd'=>md5($_POST["userPwd"])), array('field'=>'user_id','user_name','user_level'));
-        if($aUserList==null){
+        $aUserList = $oModel->get(
+            array('user_email'=>$_POST["userEmail"],'user_pwd'=>md5($_POST["userPwd"])),
+            array('field'=>'user_id','user_name','user_level')
+        );
+        
+        if ($aUserList==null) {
             unset($oModel);
             //return '密碼輸入錯誤，請確認!';
             return false;
